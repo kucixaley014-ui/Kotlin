@@ -1,2 +1,10 @@
 rootProject.name = "ClickCounter"
 include(":app")
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
