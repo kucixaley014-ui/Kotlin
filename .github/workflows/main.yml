@@ -1,0 +1,44 @@
+name: Build ClickCounter APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Create project structure and move files
+        run: |
+          mkdir -p ClickCounter/app/src/main/java/com/example/clickcounter
+          mkdir -p ClickCounter/app/src/main/res/layout
+          mkdir -p ClickCounter/app/src/main
+
+          # Перенос файлов
+          mv MainActivity.kt ClickCounter/app/src/main/java/com/example/clickcounter/MainActivity.kt
+          mv activity_main.xml ClickCounter/app/src/main/res/layout/activity_main.xml
+          mv AndroidManifest.xml ClickCounter/app/src/main/AndroidManifest.xml
+          mv build.gradle ClickCounter/app/build.gradle
+          mv settings.gradle ClickCounter/settings.gradle
+
+      - name: Build APK
+        working-directory: ClickCounter
+        run: ./gradlew assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: clickcounter-release.apk
+          path: ClickCounter/app/build/outputs/apk/release/app-release.apk
