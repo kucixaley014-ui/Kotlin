@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Получаем репозиторий
+      # 1️⃣ Checkout
       - name: Checkout repo
         uses: actions/checkout@v3
 
@@ -22,30 +22,31 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # 3️⃣ Создаём структуру Android-проекта и переносим файлы
+      # 3️⃣ Создаём структуру проекта и переносим файлы
       - name: Create project structure and move files
         run: |
           mkdir -p ClickCounter/app/src/main/java/com/example/clickcounter
           mkdir -p ClickCounter/app/src/main/res/layout
           mkdir -p ClickCounter/app/src/main
 
-          # Перенос файлов из корня репозитория
           mv MainActivity.kt ClickCounter/app/src/main/java/com/example/clickcounter/MainActivity.kt
           mv activity_main.xml ClickCounter/app/src/main/res/layout/activity_main.xml
           mv AndroidManifest.xml ClickCounter/app/src/main/AndroidManifest.xml
           mv build.gradle ClickCounter/app/build.gradle
           mv settings.gradle ClickCounter/settings.gradle
 
-      # 4️⃣ Устанавливаем Gradle через GitHub Action
+      # 4️⃣ Устанавливаем Gradle 8.4
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v3
+        with:
+          gradle-version: 8.4.1
 
       # 5️⃣ Собираем APK
       - name: Build APK
         working-directory: ClickCounter
         run: gradle assembleRelease
 
-      # 6️⃣ Загружаем APK как артефакт
+      # 6️⃣ Загружаем APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
