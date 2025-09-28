@@ -36,27 +36,14 @@ jobs:
           mv build.gradle ClickCounter/app/build.gradle
           mv settings.gradle ClickCounter/settings.gradle
 
-      # 4️⃣ Инициализация Gradle Wrapper прямо на runner
-      - name: Generate Gradle Wrapper
-        working-directory: ClickCounter
-        run: |
-          # Проверяем есть ли gradle, иначе ставим
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget https://services.gradle.org/distributions/gradle-8.4.1-bin.zip -O gradle.zip
-          unzip gradle.zip
-          mkdir -p gradle/wrapper
-          echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.4.1-bin.zip" > gradle/wrapper/gradle-wrapper.properties
-          chmod +x gradlew || true
+      # 4️⃣ Устанавливаем Gradle через GitHub Action
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v3
 
       # 5️⃣ Собираем APK
       - name: Build APK
         working-directory: ClickCounter
-        run: |
-          # Генерируем wrapper скрипт
-          curl -s https://raw.githubusercontent.com/gradle/gradle/master/gradle/wrapper/gradlew > gradlew
-          chmod +x gradlew
-          ./gradlew assembleRelease
+        run: gradle assembleRelease
 
       # 6️⃣ Загружаем APK как артефакт
       - name: Upload APK
